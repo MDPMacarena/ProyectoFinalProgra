@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="Estilos.css" type="text/css" />
+    <title>Code Playground - Inicio</title>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>HTML & CSS Code Playground</h1>
+            <p class="subtitle">Aprende programación web escribiendo código real</p>
+        </div>
+    </header>
+    
+    <main>
+        <div class="card html-card">
+            <div class="card-icon">
+                <img src="Imagenes/html.png" alt="HTML Logo" />
+            </div>
+            <div class="card-content">
+                <h2>HTML</h2>
+                <p class="card-description">Domina la estructura de las páginas web con ejercicios prácticos de HTML5</p>
+                <ul class="features">
+                    <li>✓ 6 ejercicios interactivos</li>
+                    <li>✓ Validación en tiempo real</li>
+                    <li>✓ Niveles progresivos</li>
+                </ul>
+                <button class="btnhtml">
+                    <span>Comenzar HTML</span>
+                    <span class="arrow">→</span>
+                </button>
+            </div>
+        </div>
+        
+        <div class="card css-card">
+            <div class="card-icon">
+                <img src="Imagenes/css.png" alt="CSS Logo" />
+            </div>
+            <div class="card-content">
+                <h2>CSS</h2>
+                <p class="card-description">Aprende a diseñar páginas web hermosas con ejercicios de CSS3</p>
+                <ul class="features">
+                    <li>✓ 6 ejercicios interactivos</li>
+                    <li>✓ Vista previa instantánea</li>
+                    <li>✓ Flexbox y más</li>
+                </ul>
+                <button class="btncss">
+                    <span>Comenzar CSS</span>
+                    <span class="arrow">→</span>
+                </button>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="footer-content">
+            <p>💡 Editor de código interactivo para aprender HTML y CSS</p>
+            <div class="footer-links">
+                <a href="https://www.w3schools.com" target="_blank">📚 Más recursos en W3Schools</a>
+                <span class="separator">|</span>
+                <a href="https://developer.mozilla.org" target="_blank">📖 MDN Web Docs</a>
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        document.body.addEventListener("click", function (e) {
+            if (e.target.tagName === "BUTTON" || e.target.closest("button")) {
+                const button = e.target.tagName === "BUTTON" ? e.target : e.target.closest("button");
+                sessionStorage.setItem("tipo", button.classList.contains("btnhtml") ? "html" : "css");
+                location.href = "Editor.html";
+            }
+        });
+    </script>
+</body>
+</html>

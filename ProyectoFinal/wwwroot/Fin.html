@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="Estilos.css" type="text/css" />
+    <title>Code Playground - Resultados</title>
+</head>
+<body class="resultados-page">
+    <div class="resultados-container">
+        <div class="resultados-card">
+            <div class="resultados-header">
+                <h1 id="tipoFinal">HTML</h1>
+                <p class="resultados-subtitle">Code Playground</p>
+            </div>
+
+            <div class="emoji-result" id="emojiResultado">🎉</div>
+
+            <div class="stats-container">
+                <div class="stat-item">
+                    <div class="stat-number" id="completadosNum">0</div>
+                    <div class="stat-label">Completados</div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <div class="stat-number" id="totalNum">0</div>
+                    <div class="stat-label">Total</div>
+                </div>
+            </div>
+
+            <h2 class="resultado-mensaje" id="mensajeResultado">¡Excelente trabajo!</h2>
+            <p class="resultado-descripcion" id="descripcionResultado">Has demostrado tus habilidades</p>
+
+            <div class="resultados-actions">
+                <button class="btn-home" id="btnInicio">
+                    <span>🏠</span>
+                    <span>Ir al Inicio</span>
+                </button>
+                <button class="btn-retry" id="btnReintentar">
+                    <span>🔄</span>
+                    <span>Practicar de Nuevo</span>
+                </button>
+            </div>
+
+            <div class="extra-links">
+                <p>💡 Continúa aprendiendo en:</p>
+                <a href="https://www.w3schools.com" target="_blank">📚 W3Schools</a>
+                <span>|</span>
+                <a href="https://developer.mozilla.org" target="_blank">📖 MDN Web Docs</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Obtener datos de sessionStorage
+        let completados = parseInt(sessionStorage.getItem("completados") || "0");
+        let total = parseInt(sessionStorage.getItem("total") || "6");
+        let tipo = sessionStorage.getItem("tipo") || "html";
+
+        // Elementos DOM
+        const tipoFinal = document.querySelector("#tipoFinal");
+        const emojiResultado = document.querySelector("#emojiResultado");
+        const completadosNum = document.querySelector("#completadosNum");
+        const totalNum = document.querySelector("#totalNum");
+        const mensajeResultado = document.querySelector("#mensajeResultado");
+        const descripcionResultado = document.querySelector("#descripcionResultado");
+        const btnInicio = document.querySelector("#btnInicio");
+        const btnReintentar = document.querySelector("#btnReintentar");
+
+        // Configurar tipo
+        tipoFinal.textContent = tipo.toUpperCase();
+
+        // Mostrar estadísticas
+        completadosNum.textContent = completados;
+        totalNum.textContent = total;
+
+        // Determinar resultado y mostrar mensaje
+        const porcentaje = (completados / total) * 100;
+
+        if (completados === total) {
+            emojiResultado.textContent = "🎉";
+            mensajeResultado.textContent = "¡Perfecto! 100% completado";
+            descripcionResultado.textContent = "¡Increíble! Has completado todos los ejercicios correctamente.";
+        } else if (porcentaje >= 70) {
+            emojiResultado.textContent = "😊";
+            mensajeResultado.textContent = "¡Muy bien! Buen trabajo";
+            descripcionResultado.textContent = `Completaste ${completados} de ${total} ejercicios. ¡Sigue practicando!`;
+        } else if (porcentaje >= 50) {
+            emojiResultado.textContent = "🤔";
+            mensajeResultado.textContent = "¡Buen intento!";
+            descripcionResultado.textContent = `Completaste ${completados} de ${total} ejercicios. La práctica hace al maestro.`;
+        } else {
+            emojiResultado.textContent = "😅";
+            mensajeResultado.textContent = "Sigue practicando";
+            descripcionResultado.textContent = `Completaste ${completados} de ${total} ejercicios. Revisa los recursos y vuelve a intentarlo.`;
+        }
+
+        // Botón ir al inicio
+        btnInicio.addEventListener("click", function () {
+            sessionStorage.clear();
+            location.href = "Index.html";
+        });
+
+        // Botón reintentar
+        btnReintentar.addEventListener("click", function () {
+            sessionStorage.removeItem("completados");
+            sessionStorage.removeItem("total");
+            location.href = "Editor.html";
+        });
+    </script>
+</body>
+</html>
