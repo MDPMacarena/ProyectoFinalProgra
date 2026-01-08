@@ -357,7 +357,7 @@ footer {
     gap: 10px;
 }
 .btn-hint {
-    background: linear-gradient(135deg, #9C27B0 0%, #7B1FA2 100%);
+    background: linear-gradient(135deg, #4fa5fa 0%, #1976D2 100%);
     color: white;
     box-shadow: 0 4px 15px rgba(156, 39, 176, 0.3);
 }
@@ -367,9 +367,9 @@ footer {
 }
 .hint-container {
     padding: 20px;
-    background: rgba(156, 39, 176, 0.15);
+    background: rgba(33, 150, 243, 0.15);
     border-radius: 12px;
-    border-left: 4px solid #9C27B0;
+    border-left: 4px solid #1976D2;
     font-size: 1.05em;
     line-height: 1.6;
 }
@@ -558,7 +558,6 @@ footer {
     font-size: 4em;
     font-weight: bold;
     background: linear-gradient(135deg, #E69137 0%, #FFD700 100%);
-    -webkit-text-fill-color: transparent;
 }
 .stat-label {
     font-size: 1.2em;

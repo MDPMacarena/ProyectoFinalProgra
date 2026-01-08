@@ -55,6 +55,7 @@
         let completados = parseInt(sessionStorage.getItem("completados") || "0");
         let total = parseInt(sessionStorage.getItem("total") || "6");
         let tipo = sessionStorage.getItem("tipo") || "html";
+        
         const tipoFinal = document.querySelector("#tipoFinal");
         const emojiResultado = document.querySelector("#emojiResultado");
         const completadosNum = document.querySelector("#completadosNum");
@@ -66,24 +67,14 @@
         tipoFinal.textContent = tipo.toUpperCase();
         completadosNum.textContent = completados;
         totalNum.textContent = total;
-        const porcentaje = (completados / total) * 100;
-
         if (completados === total) {
             emojiResultado.textContent = "🎉";
             mensajeResultado.textContent = "¡Perfecto! 100% completado";
             descripcionResultado.textContent = "¡Increíble! Has completado todos los ejercicios correctamente.";
-        } else if (porcentaje >= 70) {
-            emojiResultado.textContent = "😊";
-            mensajeResultado.textContent = "¡Muy bien! Buen trabajo";
-            descripcionResultado.textContent = `Completaste ${completados} de ${total} ejercicios. ¡Sigue practicando!`;
-        } else if (porcentaje >= 50) {
-            emojiResultado.textContent = "🤔";
-            mensajeResultado.textContent = "¡Buen intento!";
-            descripcionResultado.textContent = `Completaste ${completados} de ${total} ejercicios. La práctica hace al maestro.`;
         } else {
-            emojiResultado.textContent = "😅";
-            mensajeResultado.textContent = "Sigue practicando";
-            descripcionResultado.textContent = `Completaste ${completados} de ${total} ejercicios. Revisa los recursos y vuelve a intentarlo.`;
+            emojiResultado.textContent = "😊";
+            mensajeResultado.textContent = "¡Buen intento!";
+            descripcionResultado.textContent = `Obtuviste ${completados} de ${total} ejercicios correctos. ¡Sigue practicando para mejorar!`;
         }
         btnInicio.addEventListener("click", function () {
             sessionStorage.clear();

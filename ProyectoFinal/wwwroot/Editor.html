@@ -25,7 +25,7 @@
                     <h2 id="tituloEjercicio">Cargando ejercicio...</h2>
                     <span class="nivel-badge" id="nivelEjercicio">Principiante</span>
                 </div>
-                
+
                 <p class="exercise-description" id="descripcionEjercicio">Por favor espera...</p>
 
                 <div class="exercise-actions">
@@ -33,7 +33,7 @@
                         <span>💡</span>
                         <span>Ver Pista</span>
                     </button>
-                    
+
                     <div id="pistaContainer" class="hint-container" style="display: none;">
                         <p id="pistaTexto"></p>
                     </div>
@@ -81,6 +81,7 @@
         let indiceActual = 0;
         let tipo = sessionStorage.getItem("tipo") || "html";
         let completados = 0;
+
         const tipoEditor = document.querySelector("#tipoEditor");
         const ejercicioActualSpan = document.querySelector("#ejercicioActual");
         const totalEjerciciosSpan = document.querySelector("#totalEjercicios");
@@ -99,112 +100,165 @@
         const similitudFill = document.querySelector("#similitudFill");
         const similitudTexto = document.querySelector("#similitudTexto");
         const btnInicio = document.querySelector("#btnInicio");
-        if (!tipo) { location.href = "Index.html"; }
-        else {
-            ditor.textContent = tipo.toUpperCase();
-            rgarEjercicios();
+
+        // Verificar tipo
+        if (!tipo) {
+            location.href = "Index.html";
+        } else {
+            tipoEditor.textContent = tipo.toUpperCase();
+            cargarEjercicios();
         }
+
+        // Cargar ejercicios desde la API
         async function cargarEjercicios() {
             try {
-                ponse = await fetch(`/api/CodePlayground/${tipo}`);
-                if (!response.ok) { throw new Error("Error al cargar ejercicios"); }
+                const response = await fetch(`/api/CodePlayground/${tipo}`);
+
+                if (!response.ok) {
+                    throw new Error("Error al cargar ejercicios");
+                }
+
                 const data = await response.json();
                 ejercicios = data.ejercicios;
+
                 if (ejercicios.length === 0) {
                     alert("No hay ejercicios disponibles");
                     location.href = "Index.html";
                     return;
                 }
+
                 totalEjerciciosSpan.textContent = ejercicios.length;
                 mostrarEjercicio();
-            }
-            catch (error) {
+            } catch (error) {
                 console.error("Error:", error);
                 alert("Error al cargar ejercicios. Verifica que la API esté funcionando.");
                 location.href = "Index.html";
             }
         }
+
+        // Mostrar ejercicio actual
         function mostrarEjercicio() {
             if (indiceActual >= ejercicios.length) {
                 finalizarPractica();
                 return;
             }
+
             const ejercicio = ejercicios[indiceActual];
+
             ejercicioActualSpan.textContent = indiceActual + 1;
             tituloEjercicio.textContent = ejercicio.titulo;
             descripcionEjercicio.textContent = ejercicio.descripcion;
-            nivelEjercicio.textContent = ejercicio.nivel.charAt(0).toUpperCase()
-                + ejercicio.nivel.slice(1);
+            nivelEjercicio.textContent = ejercicio.nivel.charAt(0).toUpperCase() + ejercicio.nivel.slice(1);
             nivelEjercicio.className = 'nivel-badge nivel-' + ejercicio.nivel;
+
             codigoEditor.value = ejercicio.codigoInicial || "";
             pistaTexto.textContent = ejercicio.pista || "No hay pista disponible";
-            pistaContainer.style.display = "none";    
+            pistaContainer.style.display = "none";
+
             resultadoValidacion.style.display = "none";
             btnSiguiente.style.display = "none";
+
+            // Reactivar botón validar para nuevo ejercicio
+            btnValidar.disabled = false;
+
             actualizarPreview();
         }
+
+        // Actualizar preview en tiempo real
         codigoEditor.addEventListener("input", actualizarPreview);
+
         function actualizarPreview() {
             const codigo = codigoEditor.value;
             const iframeDoc = preview.contentDocument || preview.contentWindow.document;
+
             iframeDoc.open();
             iframeDoc.write(codigo);
             iframeDoc.close();
-}
+        }
+
+        // Validar código con la API
         btnValidar.addEventListener("click", async function () {
             const codigo = codigoEditor.value.trim();
+
             if (!codigo) {
                 alert("Escribe algo de código primero");
                 return;
             }
-            const ejercicioId = ejercicios[indiceActual].id; 
+
+            const ejercicioId = ejercicios[indiceActual].id;
+
             try {
+                // Deshabilitar botón mientras valida
+                btnValidar.disabled = true;
+
                 const response = await fetch("/api/CodePlayground/validar", {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
                     body: JSON.stringify({
                         ejercicioId: ejercicioId,
                         codigo: codigo
                     })
                 });
-                if (!response.ok) { throw new Error("Error al validar"); }
+
+                if (!response.ok) {
+                    throw new Error("Error al validar");
+                }
+
                 const resultado = await response.json();
                 mostrarResultado(resultado);
-            }
-            catch (error) {
+
+            } catch (error) {
                 console.error("Error:", error);
                 alert("Error al validar el código");
+                btnValidar.disabled = false; // Reactivar si hay error
             }
-});
+        });
+
+        // Mostrar resultado de validación (ACTUALIZADO)
         function mostrarResultado(resultado) {
             resultadoValidacion.style.display = "block";
             mensajeValidacion.textContent = resultado.mensaje;
-            similitudFill.style.width = resultado.similitud + "%";
-            similitudTexto.textContent = `Similitud: ${resultado.similitud}%`;
+
+            // Ya no mostrar porcentaje, solo correcto/incorrecto
             if (resultado.esCorrecto) {
                 mensajeValidacion.className = "validation-message success";
                 similitudFill.className = "progress-fill success";
-                btnSiguiente.style.display = "flex";
-                completados++;
-            }
-            else {
+                similitudFill.style.width = "100%";
+                similitudTexto.textContent = "✓ Respuesta correcta";
+                completados++; // Sumar acierto
+            } else {
                 mensajeValidacion.className = "validation-message error";
-                .className = "progress-fill error";
+                similitudFill.className = "progress-fill error";
+                similitudFill.style.width = "100%";
+                similitudTexto.textContent = "✗ Respuesta incorrecta";
             }
+
+            // Siempre mostrar botón siguiente (pase o no pase)
+            btnSiguiente.style.display = "flex";
         }
+
+        // Botón siguiente
         btnSiguiente.addEventListener("click", function () {
             indiceActual++;
             mostrarEjercicio();
         });
+
+        // Botón pista
         btnPista.addEventListener("click", function () {
             pistaContainer.style.display = pistaContainer.style.display === "none" ? "block" : "none";
         });
+
+        // Botón inicio
         btnInicio.addEventListener("click", function () {
             if (confirm("¿Regresar al inicio? Perderás tu progreso")) {
                 sessionStorage.clear();
                 location.href = "Index.html";
             }
-});
+        });
+
+        // Finalizar práctica
         function finalizarPractica() {
             sessionStorage.setItem("completados", completados);
             sessionStorage.setItem("total", ejercicios.length);
