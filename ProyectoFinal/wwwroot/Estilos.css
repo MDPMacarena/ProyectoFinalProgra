@@ -359,11 +359,11 @@ footer {
 .btn-hint {
     background: linear-gradient(135deg, #4fa5fa 0%, #1976D2 100%);
     color: white;
-    box-shadow: 0 4px 15px rgba(156, 39, 176, 0.3);
+    box-shadow: 0 4px 15px rgba(33, 150, 243, 0.15);
 }
 .btn-hint:hover {
     transform: translateY(-3px);
-    box-shadow: 0 6px 20px rgba(156, 39, 176, 0.4);
+    box-shadow: 0 6px 20px rgba(33, 150, 243, 0.15);
 }
 .hint-container {
     padding: 20px;
