@@ -77,162 +77,133 @@
         </section>
     </main>
     <script>
-let ejercicios = [];
-let indiceActual = 0;
-let tipo = sessionStorage.getItem("tipo") || "html";
-let completados = 0;
-
-// Elementos DOM
-const tipoEditor = document.querySelector("#tipoEditor");
-const ejercicioActualSpan = document.querySelector("#ejercicioActual");
-const totalEjerciciosSpan = document.querySelector("#totalEjercicios");
-const tituloEjercicio = document.querySelector("#tituloEjercicio");
-const descripcionEjercicio = document.querySelector("#descripcionEjercicio");
-const nivelEjercicio = document.querySelector("#nivelEjercicio");
-const codigoEditor = document.querySelector("#codigoEditor");
-const preview = document.querySelector("#preview");
-const btnValidar = document.querySelector("#btnValidar");
-const btnSiguiente = document.querySelector("#btnSiguiente");
-const btnPista = document.querySelector("#btnPista");
-const pistaContainer = document.querySelector("#pistaContainer");
-const pistaTexto = document.querySelector("#pistaTexto");
-const resultadoValidacion = document.querySelector("#resultadoValidacion");
-const mensajeValidacion = document.querySelector("#mensajeValidacion");
-const similitudFill = document.querySelector("#similitudFill");
-const similitudTexto = document.querySelector("#similitudTexto");
-const btnInicio = document.querySelector("#btnInicio");
-
-// Verificar tipo
-if (!tipo) {
-    location.href = "Index.html";
-} else {
-    tipoEditor.textContent = tipo.toUpperCase();
-    cargarEjercicios();
-}
-
-// Cargar ejercicios desde la API
-async function cargarEjercicios() {
-    try {
-        const response = await fetch(`/api/CodePlayground/${tipo}`);
-        
-        if (!response.ok) {
-            throw new Error("Error al cargar ejercicios");
+        let ejercicios = [];
+        let indiceActual = 0;
+        let tipo = sessionStorage.getItem("tipo") || "html";
+        let completados = 0;
+        const tipoEditor = document.querySelector("#tipoEditor");
+        const ejercicioActualSpan = document.querySelector("#ejercicioActual");
+        const totalEjerciciosSpan = document.querySelector("#totalEjercicios");
+        const tituloEjercicio = document.querySelector("#tituloEjercicio");
+        const descripcionEjercicio = document.querySelector("#descripcionEjercicio");
+        const nivelEjercicio = document.querySelector("#nivelEjercicio");
+        const codigoEditor = document.querySelector("#codigoEditor");
+        const preview = document.querySelector("#preview");
+        const btnValidar = document.querySelector("#btnValidar");
+        const btnSiguiente = document.querySelector("#btnSiguiente");
+        const btnPista = document.querySelector("#btnPista");
+        const pistaContainer = document.querySelector("#pistaContainer");
+        const pistaTexto = document.querySelector("#pistaTexto");
+        const resultadoValidacion = document.querySelector("#resultadoValidacion");
+        const mensajeValidacion = document.querySelector("#mensajeValidacion");
+        const similitudFill = document.querySelector("#similitudFill");
+        const similitudTexto = document.querySelector("#similitudTexto");
+        const btnInicio = document.querySelector("#btnInicio");
+        if (!tipo) { location.href = "Index.html"; }
+        else {
+            ditor.textContent = tipo.toUpperCase();
+            rgarEjercicios();
         }
-        
-        const data = await response.json();
-        ejercicios = data.ejercicios;
-        
-        if (ejercicios.length === 0) {
-            alert("No hay ejercicios disponibles");
-            location.href = "Index.html";
-            return;
+        async function cargarEjercicios() {
+            try {
+                ponse = await fetch(`/api/CodePlayground/${tipo}`);
+                if (!response.ok) { throw new Error("Error al cargar ejercicios"); }
+                const data = await response.json();
+                ejercicios = data.ejercicios;
+                if (ejercicios.length === 0) {
+                    alert("No hay ejercicios disponibles");
+                    location.href = "Index.html";
+                    return;
+                }
+                totalEjerciciosSpan.textContent = ejercicios.length;
+                mostrarEjercicio();
+            }
+            catch (error) {
+                console.error("Error:", error);
+                alert("Error al cargar ejercicios. Verifica que la API esté funcionando.");
+                location.href = "Index.html";
+            }
         }
-        
-        totalEjerciciosSpan.textContent = ejercicios.length;
-        mostrarEjercicio();
-    } catch (error) {
-        console.error("Error:", error);
-        alert("Error al cargar ejercicios. Verifica que la API esté funcionando.");
-        location.href = "Index.html";
-    }
+        function mostrarEjercicio() {
+            if (indiceActual >= ejercicios.length) {
+                finalizarPractica();
+                return;
+            }
+            const ejercicio = ejercicios[indiceActual];
+            ejercicioActualSpan.textContent = indiceActual + 1;
+            tituloEjercicio.textContent = ejercicio.titulo;
+            descripcionEjercicio.textContent = ejercicio.descripcion;
+            nivelEjercicio.textContent = ejercicio.nivel.charAt(0).toUpperCase()
+                + ejercicio.nivel.slice(1);
+            nivelEjercicio.className = 'nivel-badge nivel-' + ejercicio.nivel;
+            codigoEditor.value = ejercicio.codigoInicial || "";
+            pistaTexto.textContent = ejercicio.pista || "No hay pista disponible";
+            pistaContainer.style.display = "none";    
+            resultadoValidacion.style.display = "none";
+            btnSiguiente.style.display = "none";
+            actualizarPreview();
+        }
+        codigoEditor.addEventListener("input", actualizarPreview);
+        function actualizarPreview() {
+            const codigo = codigoEditor.value;
+            const iframeDoc = preview.contentDocument || preview.contentWindow.document;
+            iframeDoc.open();
+            iframeDoc.write(codigo);
+            iframeDoc.close();
 }
-
-// Mostrar ejercicio actual
-function mostrarEjercicio() {
-    if (indiceActual >= ejercicios.length) {
-        finalizarPractica();
-        return;
-    }
-
-    const ejercicio = ejercicios[indiceActual];
-    
-    ejercicioActualSpan.textContent = indiceActual + 1;
-    tituloEjercicio.textContent = ejercicio.titulo;
-    descripcionEjercicio.textContent = ejercicio.descripcion;
-    nivelEjercicio.textContent = ejercicio.nivel.charAt(0).toUpperCase() + ejercicio.nivel.slice(1);
-    nivelEjercicio.className = 'nivel-badge nivel-' + ejercicio.nivel;
-    
-    codigoEditor.value = ejercicio.codigoInicial || "";
-    pistaTexto.textContent = ejercicio.pista || "No hay pista disponible";
-    pistaContainer.style.display = "none";
-    
-    resultadoValidacion.style.display = "none";
-    btnSiguiente.style.display = "none";
-    
-    actualizarPreview();
-}
-codigoEditor.addEventListener("input", actualizarPreview);
-
-function actualizarPreview() {
-    const codigo = codigoEditor.value;
-    const iframeDoc = preview.contentDocument || preview.contentWindow.document;
-    
-    iframeDoc.open();
-    iframeDoc.write(codigo);
-    iframeDoc.close();
-}
-btnValidar.addEventListener("click", async function() {
-    const codigo = codigoEditor.value.trim();
-    
-    if (!codigo) {
-        alert("Escribe algo de código primero");
-        return;
-    }
-
-    const ejercicioId = ejercicios[indiceActual].id;
-    
-    try {
-        const response = await fetch("/api/CodePlayground/validar", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                ejercicioId: ejercicioId,
-                codigo: codigo
-            })
+        btnValidar.addEventListener("click", async function () {
+            const codigo = codigoEditor.value.trim();
+            if (!codigo) {
+                alert("Escribe algo de código primero");
+                return;
+            }
+            const ejercicioId = ejercicios[indiceActual].id; 
+            try {
+                const response = await fetch("/api/CodePlayground/validar", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        ejercicioId: ejercicioId,
+                        codigo: codigo
+                    })
+                });
+                if (!response.ok) { throw new Error("Error al validar"); }
+                const resultado = await response.json();
+                mostrarResultado(resultado);
+            }
+            catch (error) {
+                console.error("Error:", error);
+                alert("Error al validar el código");
+            }
+});
+        function mostrarResultado(resultado) {
+            resultadoValidacion.style.display = "block";
+            mensajeValidacion.textContent = resultado.mensaje;
+            similitudFill.style.width = resultado.similitud + "%";
+            similitudTexto.textContent = `Similitud: ${resultado.similitud}%`;
+            if (resultado.esCorrecto) {
+                mensajeValidacion.className = "validation-message success";
+                similitudFill.className = "progress-fill success";
+                btnSiguiente.style.display = "flex";
+                completados++;
+            }
+            else {
+                mensajeValidacion.className = "validation-message error";
+                .className = "progress-fill error";
+            }
+        }
+        btnSiguiente.addEventListener("click", function () {
+            indiceActual++;
+            mostrarEjercicio();
         });
-
-        if (!response.ok) {
-            throw new Error("Error al validar");
-        }
-        
-        const resultado = await response.json();
-        mostrarResultado(resultado);
-        
-    } catch (error) {
-        console.error("Error:", error);
-        alert("Error al validar el código");
-    }
-});
-function mostrarResultado(resultado) {
-    resultadoValidacion.style.display = "block";
-    mensajeValidacion.textContent = resultado.mensaje;
-    similitudFill.style.width = resultado.similitud + "%";
-    similitudTexto.textContent = `Similitud: ${resultado.similitud}%`;
-    
-    if (resultado.esCorrecto) {
-        mensajeValidacion.className = "validation-message success";
-        similitudFill.className = "progress-fill success";
-        btnSiguiente.style.display = "flex";
-        completados++;
-    } else {
-        mensajeValidacion.className = "validation-message error";
-        similitudFill.className = "progress-fill error";
-    }
-}
-btnSiguiente.addEventListener("click", function() {
-    indiceActual++;
-    mostrarEjercicio();
-});
-btnPista.addEventListener("click", function() {
-    pistaContainer.style.display = pistaContainer.style.display === "none" ? "block" : "none";
-});
-btnInicio.addEventListener("click", function() {
-    if (confirm("¿Regresar al inicio? Perderás tu progreso")) {
-        sessionStorage.clear();
-        location.href = "Index.html";
-    }
+        btnPista.addEventListener("click", function () {
+            pistaContainer.style.display = pistaContainer.style.display === "none" ? "block" : "none";
+        });
+        btnInicio.addEventListener("click", function () {
+            if (confirm("¿Regresar al inicio? Perderás tu progreso")) {
+                sessionStorage.clear();
+                location.href = "Index.html";
+            }
 });
         function finalizarPractica() {
             sessionStorage.setItem("completados", completados);

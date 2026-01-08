@@ -52,12 +52,9 @@
     </div>
 
     <script>
-        // Obtener datos de sessionStorage
         let completados = parseInt(sessionStorage.getItem("completados") || "0");
         let total = parseInt(sessionStorage.getItem("total") || "6");
         let tipo = sessionStorage.getItem("tipo") || "html";
-
-        // Elementos DOM
         const tipoFinal = document.querySelector("#tipoFinal");
         const emojiResultado = document.querySelector("#emojiResultado");
         const completadosNum = document.querySelector("#completadosNum");
@@ -66,15 +63,9 @@
         const descripcionResultado = document.querySelector("#descripcionResultado");
         const btnInicio = document.querySelector("#btnInicio");
         const btnReintentar = document.querySelector("#btnReintentar");
-
-        // Configurar tipo
         tipoFinal.textContent = tipo.toUpperCase();
-
-        // Mostrar estadísticas
         completadosNum.textContent = completados;
         totalNum.textContent = total;
-
-        // Determinar resultado y mostrar mensaje
         const porcentaje = (completados / total) * 100;
 
         if (completados === total) {
@@ -94,14 +85,10 @@
             mensajeResultado.textContent = "Sigue practicando";
             descripcionResultado.textContent = `Completaste ${completados} de ${total} ejercicios. Revisa los recursos y vuelve a intentarlo.`;
         }
-
-        // Botón ir al inicio
         btnInicio.addEventListener("click", function () {
             sessionStorage.clear();
             location.href = "Index.html";
         });
-
-        // Botón reintentar
         btnReintentar.addEventListener("click", function () {
             sessionStorage.removeItem("completados");
             sessionStorage.removeItem("total");
